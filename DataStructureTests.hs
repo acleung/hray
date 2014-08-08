@@ -20,7 +20,6 @@ main = do
      v2 = Vector3D (4,5,6)
      v3 = Vector3D (5,7,9)
   in test "Vector3D Add" $ v1 + v2 == v3
- 
  putStrLn("End")
 
 test :: String -> Bool -> IO ()

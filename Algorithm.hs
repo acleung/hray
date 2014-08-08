@@ -21,4 +21,10 @@ intersect (ray_org, ray_dir) (Sphere {sphere_loc = sphere_org, sphere_r = r})
        t1 = ((-b) + sqrt(e))/2
        t2 = ((-b) - sqrt(e))/2
 
-
+generate_light_rays :: Viewport -> [Ray]
+generate_light_rays(
+ Viewport {viewport_loc = loc,
+           viewport_dir = dir, 
+           viewport_resW = width, 
+           viewport_resH = height }) =
+  []

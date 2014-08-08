@@ -1,7 +1,8 @@
 module DataStructure (
- Vector3D(..),
- ViewPort,
  Color, Ray,
+ Viewport(..),
+ Vector3D(..),
+ Scene(..),
  Sphere(..),
  normalize
 ) where 
@@ -25,19 +26,23 @@ instance Num Vector3D where
 type Color = (Int, Int, Int)
 type Ray = (Vector3D, Vector3D)
 
-
-data ViewPort = ViewPort {
- viewPort_ray :: Ray,
- viewPort_with :: Float,
- viewPort_height :: Float,
- viewPort_resX :: Int,
- viewPort_resY :: Int
-}
-
 data Sphere = Sphere {
  sphere_loc :: Vector3D,
  sphere_r :: Float
 }
 
 data Plane = Plane {
+
+}
+
+data Viewport = Viewport {
+ viewport_loc :: Ray,
+ viewport_dir :: Ray,
+ viewport_resW :: Int,
+ viewport_resH :: Int
+}
+
+data Scene = Scene {
+ scene_viewport :: Viewport,
+ scene_spheres :: [Sphere]
 }
