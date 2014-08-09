@@ -12,14 +12,14 @@ module DataStructure (
  dot, cross
 ) where 
 
-data Vector3D = Vector3D (Float, Float, Float) deriving (Show, Read)
+data Vector3D = Vector3D (Double, Double, Double) deriving (Show, Read)
 
 normalize :: Vector3D -> Vector3D
 normalize (Vector3D (0, 0, 0)) = error "Well that's fucked"
 normalize (Vector3D (x, y, z)) = Vector3D (x / l, y / l, z / l)
                       where l = sqrt $ x^2 + y^2 + z^2
 
-dot :: Vector3D -> Vector3D -> Float
+dot :: Vector3D -> Vector3D -> Double
 dot (Vector3D (x1,y1,z1)) (Vector3D (x2,y2,z2)) =
  x1*x2 + y1*y2 + z1*z2
 
@@ -40,7 +40,7 @@ type Ray = (Vector3D, Vector3D)
 
 data Sphere = Sphere {
  sphere_loc :: Vector3D,
- sphere_r :: Float
+ sphere_r :: Double
 }
 
 data Plane = Plane {

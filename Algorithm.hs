@@ -9,16 +9,16 @@ module Algorithm (
 
 import DataStructure
 
-intersect :: Ray -> Sphere -> Float
+intersect :: Ray -> Sphere -> Double
 intersect (ray_org, ray_dir) (Sphere {sphere_loc = sphere_org, sphere_r = r})
  | e < 0     = -1
  | otherwise = min t1 t2
- where a = ray_dir `dot` ray_dir
-       b = 2 * ((ray_org - sphere_org) `dot` ray_dir)
-       c = (ray_org - sphere_org) `dot` (ray_org - sphere_org) - r^2
-       e = b^2-4*a*c
-       t1 = ((-b) + sqrt(e))/2
-       t2 = ((-b) - sqrt(e))/2
+ where a = ray_dir `dot` ray_dir :: Double
+       b = 2 * ((ray_org - sphere_org) `dot` ray_dir) :: Double
+       c = (ray_org - sphere_org) `dot` (ray_org - sphere_org) - r^2 :: Double
+       e = b^2-4*a*c :: Double
+       t1 = ((-b) + sqrt(e))/2.0 :: Double
+       t2 = ((-b) - sqrt(e))/2.0 :: Double
 
 raytrace :: Scene -> [Color]
 raytrace s = map (\r -> compute_color_from_closest_sphere (compute_closest_sphere r (scene_spheres s))) (viewport_to_primary_rays (scene_viewport s))

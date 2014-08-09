@@ -13,8 +13,8 @@ main = do
                  viewport_loc = Vector3D(0,0,1),
                  viewport_dir = Vector3D(0,0,-1),
                  viewport_up  = Vector3D(0,1,0),
-                 viewport_resW = 100,
-                 viewport_resH = 100
+                 viewport_resW = 800,
+                 viewport_resH = 600
                 })) [Sphere {sphere_loc = Vector3D(0,0,-4), sphere_r = 1.0}]
 
 colors_to_text :: [Color] -> String
