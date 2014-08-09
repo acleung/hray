@@ -1,7 +1,8 @@
 
 module Algorithm (
  intersect,
- dot
+ dot,
+ generate_ray_dir
 ) where 
 
 import DataStructure
@@ -21,6 +22,24 @@ generate_light_rays :: Viewport -> [Ray]
 generate_light_rays(
  Viewport {viewport_loc = loc,
            viewport_dir = dir, 
+           viewport_up = up, 
            viewport_resW = width, 
            viewport_resH = height }) =
-  []
+  [] where right = normalize(cross dir up)
+           x_ratio = 1.0 / toRational width
+           y_ratio = 1.0 / toRational height
+
+generate_ray_dir :: Vector3D -> Vector3D -> Int -> Int -> [Vector3D]
+generate_ray_dir org dir width height
+ = [normalize(dir + (Vector3D(fromIntegral(x)*x_ratio,fromIntegral(y)*y_ratio,0))) |
+                                    x <-[x_start..x_end],
+                                    y <-[y_start..y_end]]
+ where x_ratio = 1.0 / w
+       y_ratio = 1.0 / h
+       w = fromIntegral width
+       h = fromIntegral height
+       x_start = -ceiling(w/2) :: Int
+       x_end   = floor(w/2) :: Int
+       y_start = -ceiling(h/2) :: Int
+       y_end   = floor(h/2) :: Int
+      
