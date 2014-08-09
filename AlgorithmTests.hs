@@ -23,7 +23,15 @@ main = do
 
  let org = Vector3D (0,0,0)
      dir = Vector3D (0,0,-1)
-  in test "generat_ray_dir" $ elem dir (generate_ray_dir org dir 3 3)
+  in test "generat_ray_dir" $ elem dir (generate_primary_ray_dirs org dir 3 3)
+
+ let org = Vector3D (0,0,0)
+     dir = Vector3D (0,0,-1)
+  in test "generat_ray_dir len 1" $ length (generate_primary_ray_dirs org dir 3 3) == 9
+
+ let org = Vector3D (0,0,0)
+     dir = Vector3D (0,0,-1)
+  in test "generat_ray_dir len 2" $ length (generate_primary_ray_dirs org dir 100 100) == 100*100
 
 test :: String -> Bool -> IO ()
 test s x = assert (x) (putStrLn $ " " ++ s ++ " [passed]")
