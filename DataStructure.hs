@@ -9,7 +9,7 @@ module DataStructure (
  Scene(..),
  Sphere(..),
  normalize,
- dot, cross
+ dot, cross, scalar_multi
 ) where 
 
 data Vector3D = Vector3D (Double, Double, Double) deriving (Show, Read)
@@ -23,6 +23,9 @@ dot :: Vector3D -> Vector3D -> Double
 dot (Vector3D (x1,y1,z1)) (Vector3D (x2,y2,z2)) =
  x1*x2 + y1*y2 + z1*z2
 
+scalar_multi :: Vector3D -> Double -> Vector3D
+scalar_multi (Vector3D (x,y,z)) s = Vector3D (x*s, y*s, z*s)
+
 cross :: Vector3D -> Vector3D -> Vector3D
 cross (Vector3D (x1,y1,z1)) (Vector3D (x2,y2,z2)) =
  (Vector3D (y1*z2-z1*y2, z1*x2-x1*z2, x1*y2-y1*x2))
@@ -34,13 +37,16 @@ instance Num Vector3D where
   Vector3D (x1+x2, y1+y2, z1+z2)
  (Vector3D (x1,y1,z1)) - (Vector3D (x2,y2,z2)) =
   Vector3D (x1-x2, y1-y2, z1-z2)
- 
+
 type Color = (Int, Int, Int)
 type Ray = (Vector3D, Vector3D)
 
 data Sphere = Sphere {
  sphere_loc :: Vector3D,
- sphere_r :: Double
+ sphere_r :: Double,
+ sphere_color_a :: Color,
+ sphere_color_d :: Color,
+ sphere_color_s :: Color
 }
 
 data Plane = Plane {

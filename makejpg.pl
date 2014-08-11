@@ -24,6 +24,9 @@ while(<>) {
     $r = $1;
     $g = $2;
     $b = $3;
+    die "R > 255" if $r > 255;
+    die "G > 255" if $g > 255;
+    die "B > 255" if $b > 255;
     $im->setPixel($x,$y,$im->colorResolve($r, $g, $b));
     $x++;
     if ($x == $w) {
