@@ -21,6 +21,7 @@ main = do
      sphere = Sphere {sphere_loc = Vector3D(0,0,3), sphere_r = 1}
   in test "Intersect Miss" $ (intersect ray sphere) == -1
 
+{-
  let org = Vector3D (0,0,0)
      dir = Vector3D (0,0,-1)
   in test "generat_ray_dir" $ elem dir (generate_primary_ray_dirs org dir 3 3)
@@ -32,6 +33,7 @@ main = do
  let org = Vector3D (0,0,0)
      dir = Vector3D (0,0,-1)
   in test "generat_ray_dir len 2" $ length (generate_primary_ray_dirs org dir 100 100) == 100*100
+-}
 
 test :: String -> Bool -> IO ()
 test s x = assert (x) (putStrLn $ " " ++ s ++ " [passed]")

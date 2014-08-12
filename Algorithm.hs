@@ -2,7 +2,6 @@ module Algorithm (
  raytrace,
  intersect,
  dot,
- generate_primary_ray_dirs,
  viewport_to_primary_rays
 ) where 
 
@@ -22,8 +21,18 @@ intersect (ray_org, ray_dir) (Sphere {sphere_loc = sphere_org, sphere_r = r})
        t2 = ((-b) - sqrt(e))/2.0 :: Double
 
 raytrace :: Scene -> [Color]
-raytrace scene = map (\r -> compute_color_from_closest_sphere r (compute_closest_sphere r (scene_spheres scene)))
+raytrace scene = map
+ (compute_color_from_ray scene)
  (viewport_to_primary_rays (scene_viewport scene))
+
+compute_color_from_multiple_rays :: Scene -> Ray -> Color 
+compute_color_from_multiple_rays scene ray = color_empty
+
+compute_anti_alias_rays :: Scene -> Ray -> [Ray]
+compute_anti_alias_rays scene ray = []
+
+compute_color_from_ray :: Scene -> Ray -> Color
+compute_color_from_ray scene ray = compute_color_from_closest_sphere ray (compute_closest_sphere ray (scene_spheres scene))
 
 -- It's the location of the intersection.
 compute_color_from_closest_sphere :: Ray -> [(Vector3D, Sphere)] -> Color
@@ -33,9 +42,8 @@ compute_color_from_closest_sphere r intersection
  where color_ambient  = phong_shading_ambient  r (last intersection)
        color_diffuse  = phong_shading_diffuse  r (last intersection)
        color_specular = phong_shading_specular r (last intersection)
-       color_sum      = color_ambient + color_diffuse + color_specular
+       color_sum      = color_ambient + color_diffuse 
        
-
 phong_shading_ambient :: Ray -> (Vector3D, Sphere) -> Color
 phong_shading_ambient _ (Vector3D loc, sphere) = sphere_color_a sphere
 
@@ -73,14 +81,12 @@ viewport_to_primary_rays(
            viewport_up = up, 
            viewport_resW = width, 
            viewport_resH = height }) =
-  generate_primary_rays loc (generate_primary_ray_dirs loc dir width height)
+  generate_primary_ray (loc,dir) width height
 
-generate_primary_rays :: Vector3D -> [Vector3D] -> [Ray]
-generate_primary_rays org ray_dirs = map (\x -> (org,x)) ray_dirs
-
-generate_primary_ray_dirs :: Vector3D -> Vector3D -> Int -> Int -> [Vector3D]
-generate_primary_ray_dirs org dir width height
- = [normalize(dir + (Vector3D(fromIntegral(x)*ratio,fromIntegral((-y))*ratio,0))) |
+generate_primary_ray :: Ray -> Int -> Int -> [Ray]
+generate_primary_ray (org,dir) width height =
+ map (\x -> (org, x))
+  [normalize(dir + (Vector3D(fromIntegral(x)*ratio,fromIntegral((-y))*ratio,0))) |
                                     y <-[y_start..y_end],
                                     x <-[x_start..x_end]]
  where x_ratio = 1.0 / w
@@ -92,4 +98,3 @@ generate_primary_ray_dirs org dir width height
        x_end   = floor(w/2) - 1:: Int
        y_start = -ceiling(h/2) :: Int
        y_end   = floor(h/2) - 1:: Int
-      
