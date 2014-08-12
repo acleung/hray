@@ -3,7 +3,7 @@
  some simple functions.
 -}
 module DataStructure (
- Color, Ray,
+ Color(..), Ray,
  Viewport(..),
  Vector3D(..),
  Scene(..),
@@ -38,7 +38,14 @@ instance Num Vector3D where
  (Vector3D (x1,y1,z1)) - (Vector3D (x2,y2,z2)) =
   Vector3D (x1-x2, y1-y2, z1-z2)
 
-type Color = (Int, Int, Int)
+data Color = Color (Int, Int, Int) deriving (Show, Read)
+instance Num Color where
+ (Color (r1,g1,b1)) + (Color (r2,g2,b2)) =
+  Color (min (r1+r2) 255, min (g1+g2) 255, min (b1+b2) 255)
+
+instance Eq Color where (Color x) == (Color y) = x == y
+
+
 type Ray = (Vector3D, Vector3D)
 
 data Sphere = Sphere {

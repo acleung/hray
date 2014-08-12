@@ -20,22 +20,34 @@ intersect (ray_org, ray_dir) (Sphere {sphere_loc = sphere_org, sphere_r = r})
        t2 = ((-b) - sqrt(e))/2.0 :: Double
 
 raytrace :: Scene -> [Color]
-raytrace s = map (\r -> compute_color_from_closest_sphere (compute_closest_sphere r (scene_spheres s))) (viewport_to_primary_rays (scene_viewport s))
+raytrace scene = map (\r -> compute_color_from_closest_sphere r (compute_closest_sphere r (scene_spheres scene)))
+ (viewport_to_primary_rays (scene_viewport scene))
 
 -- It's the location of the intersection.
-compute_color_from_closest_sphere :: [(Vector3D, Sphere)] -> Color
-compute_color_from_closest_sphere intersection = if null intersection then (0,0,0) else (min (acr+dcr) 255, min (acg+dcg) 255, min (acb+dcb) 255)
- where (acr, acg, acb) = phong_shading_ambient $ last intersection
-       (dcr, dcg, dcb) = phong_shading_diffuse $ last intersection
+compute_color_from_closest_sphere :: Ray -> [(Vector3D, Sphere)] -> Color
+compute_color_from_closest_sphere r intersection = if null intersection then Color (0,0,0) else ca + cd 
+ where ca = phong_shading_ambient  r (last intersection)
+       cd = phong_shading_diffuse  r (last intersection)
+       cs = phong_shading_specular r (last intersection)
 
-phong_shading_ambient :: (Vector3D, Sphere) -> Color
-phong_shading_ambient (Vector3D loc, sphere) = sphere_color_a sphere
+phong_shading_ambient :: Ray -> (Vector3D, Sphere) -> Color
+phong_shading_ambient _ (Vector3D loc, sphere) = sphere_color_a sphere
 
-phong_shading_diffuse :: (Vector3D, Sphere) -> Color
-phong_shading_diffuse (loc, Sphere {sphere_color_d = (r,g,b), sphere_loc= sloc}) 
- | factor > 0 = (floor((fromIntegral r) * factor), floor((fromIntegral g) * factor), floor((fromIntegral b) * factor))
- | otherwise  = (0,0,0)
-  where factor = 0.1 * dot (Vector3D (99,99,99)) (normalize (loc - sloc)) :: Double
+phong_shading_diffuse :: Ray -> (Vector3D, Sphere) -> Color
+phong_shading_diffuse _ (loc, Sphere {sphere_color_d = (Color (r,g,b)), sphere_loc= sloc}) 
+ | factor > 0 = Color (floor((fromIntegral r) * factor), floor((fromIntegral g) * factor), floor((fromIntegral b) * factor))
+ | otherwise  = Color (0,0,0)
+  where factor = 0.1 * dot normal light :: Double
+        normal = normalize (loc - sloc)
+        light  = Vector3D (99,99,99)
+
+phong_shading_specular :: Ray -> (Vector3D, Sphere) -> Color
+phong_shading_specular (ray_loc, ray_dir) (loc, Sphere {sphere_color_s = (Color (r,g,b)), sphere_loc= sloc})
+ | factor > 0 = Color (floor((fromIntegral r) * factor), floor((fromIntegral g) * factor), floor((fromIntegral b) * factor))
+ | otherwise  = Color (0,0,0)
+ where refection_dir = normalize ((scalar_multi normal (2 * (dot normal ray_dir))) - ray_dir)
+       normal = normalize (loc - sloc)
+       factor = 0.1 * ((dot refection_dir (Vector3D (99,99,99))) ^ 3)
 
 compute_closest_sphere :: Ray -> [Sphere] -> [(Vector3D, Sphere)]
 compute_closest_sphere ray spheres = foldl (pick_closer_sphere ray) [] spheres
