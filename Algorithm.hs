@@ -8,6 +8,8 @@ module Algorithm (
 
 import DataStructure
 
+color_empty = Color(0,0,0)
+
 intersect :: Ray -> Sphere -> Double
 intersect (ray_org, ray_dir) (Sphere {sphere_loc = sphere_org, sphere_r = r})
  | e < 0     = -1
@@ -25,10 +27,14 @@ raytrace scene = map (\r -> compute_color_from_closest_sphere r (compute_closest
 
 -- It's the location of the intersection.
 compute_color_from_closest_sphere :: Ray -> [(Vector3D, Sphere)] -> Color
-compute_color_from_closest_sphere r intersection = if null intersection then Color (0,0,0) else ca + cd 
- where ca = phong_shading_ambient  r (last intersection)
-       cd = phong_shading_diffuse  r (last intersection)
-       cs = phong_shading_specular r (last intersection)
+compute_color_from_closest_sphere r intersection
+ | null intersection = color_empty
+ | otherwise         = color_sum
+ where color_ambient  = phong_shading_ambient  r (last intersection)
+       color_diffuse  = phong_shading_diffuse  r (last intersection)
+       color_specular = phong_shading_specular r (last intersection)
+       color_sum      = color_ambient + color_diffuse + color_specular
+       
 
 phong_shading_ambient :: Ray -> (Vector3D, Sphere) -> Color
 phong_shading_ambient _ (Vector3D loc, sphere) = sphere_color_a sphere
@@ -36,7 +42,7 @@ phong_shading_ambient _ (Vector3D loc, sphere) = sphere_color_a sphere
 phong_shading_diffuse :: Ray -> (Vector3D, Sphere) -> Color
 phong_shading_diffuse _ (loc, Sphere {sphere_color_d = (Color (r,g,b)), sphere_loc= sloc}) 
  | factor > 0 = Color (floor((fromIntegral r) * factor), floor((fromIntegral g) * factor), floor((fromIntegral b) * factor))
- | otherwise  = Color (0,0,0)
+ | otherwise  = color_empty
   where factor = 0.1 * dot normal light :: Double
         normal = normalize (loc - sloc)
         light  = Vector3D (99,99,99)
@@ -44,7 +50,7 @@ phong_shading_diffuse _ (loc, Sphere {sphere_color_d = (Color (r,g,b)), sphere_l
 phong_shading_specular :: Ray -> (Vector3D, Sphere) -> Color
 phong_shading_specular (ray_loc, ray_dir) (loc, Sphere {sphere_color_s = (Color (r,g,b)), sphere_loc= sloc})
  | factor > 0 = Color (floor((fromIntegral r) * factor), floor((fromIntegral g) * factor), floor((fromIntegral b) * factor))
- | otherwise  = Color (0,0,0)
+ | otherwise  = color_empty
  where refection_dir = normalize ((scalar_multi normal (2 * (dot normal ray_dir))) - ray_dir)
        normal = normalize (loc - sloc)
        factor = 0.1 * ((dot refection_dir (Vector3D (99,99,99))) ^ 3)
