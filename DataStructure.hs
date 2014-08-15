@@ -9,8 +9,10 @@ module DataStructure (
  Scene(..),
  Sphere(..),
  normalize,
+ average_color,
  dot, cross, scalar_multi
-) where 
+) where
+import Debug.Trace
 
 fucked = error "Well that's fucked"
 
@@ -55,6 +57,13 @@ instance Num Color where
  fromInteger c = fucked
 
 instance Eq Color where (Color x) == (Color y) = x == y
+
+average_color :: [Color] -> Color
+average_color colors = Color average
+ where average = (floor ((toRational sum_r)/len), floor ((toRational sum_g)/len), floor ((toRational sum_b)/len))
+       len     = toRational $ length colors 
+       (sum_r,sum_g,sum_b) = foldl (\(r1,g1,b1) (Color(r2,g2,b2)) -> (r1+r2,g1+g2,b1+b2)) (0,0,0) colors
+
 
 type Ray = (Vector3D, Vector3D)
 

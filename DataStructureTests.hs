@@ -1,4 +1,5 @@
 import DataStructure
+import Debug.Trace
 import Control.Exception
 
 main = do
@@ -29,6 +30,11 @@ main = do
      v2 = Vector3D (4,5,6)
      v3 = Vector3D (5,7,9)
   in test "Vector3D Add" $ v1 + v2 == v3
+
+ let c1 = Color (2,4,6)
+     c2 = Color (4,8,12)
+     c3 = Color (3,6,9)
+  in test "Color average" $ average_color [c1,c2] == c3
 
 test :: String -> Bool -> IO ()
 test s x = assert (x) (putStrLn $ " " ++ s ++ " [passed]")

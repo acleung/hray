@@ -6,12 +6,12 @@ import qualified Data.ByteString.Char8 as BString
 file = "output.txt"
 
 main = do
-  putStrLn(show(length(raytrace scene)))
+  putStrLn(show(length colors))
   writeFile "output.txt" $ "size=" ++
     show(viewport_resW(scene_viewport scene)) ++ "x" ++
     show(viewport_resH(scene_viewport scene)) ++ "\n"
   BString.appendFile "output.txt" (BString.concat 
-    (map (\color -> BString.pack (show(color) ++ "\n")) (raytrace scene)))
+    (map (\color -> BString.pack (show(color) ++ "\n")) colors))
 
   where scene = Scene (
                  Viewport {
@@ -38,3 +38,4 @@ main = do
                  [
                   Vector3D (99,99,99)
                  ]
+        colors = raytrace scene

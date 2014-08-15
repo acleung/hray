@@ -6,6 +6,7 @@ module Algorithm (
 ) where 
 
 import DataStructure
+import Debug.Trace
 
 color_empty = Color(0,0,0)
 
@@ -21,16 +22,25 @@ intersect (ray_org, ray_dir) (Sphere {sphere_loc = sphere_org, sphere_r = r})
        t2 = ((-b) - sqrt(e))/2.0 :: Double
 
 raytrace :: Scene -> [Color]
-raytrace scene = map
- (compute_color_from_ray scene)
- (viewport_to_primary_rays (scene_viewport scene))
+raytrace scene = map (compute_color_from_multiple_rays scene) p_rays
+ where p_rays = (viewport_to_primary_rays (scene_viewport scene))
 
 compute_color_from_multiple_rays :: Scene -> Ray -> Color 
-compute_color_from_multiple_rays scene ray = color_empty
+compute_color_from_multiple_rays scene ray = average_color colors
+ where colors = map (compute_color_from_ray scene) rays
+       rays = (compute_anti_alias_rays scene ray)
 
 compute_anti_alias_rays :: Scene -> Ray -> [Ray]
-compute_anti_alias_rays scene ray = []
-
+compute_anti_alias_rays scene ray = rays
+ where width  = viewport_resW $ scene_viewport scene
+       height = viewport_resH $ scene_viewport scene
+       w = fromIntegral $ 2 * width + 1
+       h = fromIntegral $ 2 * height + 1
+       screen_w = 1.0 / w
+       screen_h = 1.0 / h
+       screensize  = min screen_w screen_h
+       rays = generate_primary_rays screensize ray 1 1
+       
 compute_color_from_ray :: Scene -> Ray -> Color
 compute_color_from_ray scene ray = compute_color_from_closest_sphere ray (compute_closest_sphere ray (scene_spheres scene))
 
@@ -81,20 +91,19 @@ viewport_to_primary_rays(
            viewport_up = up, 
            viewport_resW = width, 
            viewport_resH = height }) =
-  generate_primary_ray (loc,dir) width height
+  generate_primary_rays 1.0 (loc,dir) width height
 
-generate_primary_ray :: Ray -> Int -> Int -> [Ray]
-generate_primary_ray (org,dir) width height =
- map (\x -> (org, x))
-  [normalize(dir + (Vector3D(fromIntegral(x)*ratio,fromIntegral((-y))*ratio,0))) |
-                                    y <-[y_start..y_end],
-                                    x <-[x_start..x_end]]
- where x_ratio = 1.0 / w
-       y_ratio = 1.0 / h
+generate_primary_rays :: Double -> Ray -> Int -> Int -> [Ray]
+generate_primary_rays screensize (org,dir) width height =
+ map (\new_dir -> (org, new_dir)) dirs
+ where x_ratio = screensize / w
+       y_ratio = screensize / h
        ratio  = min x_ratio y_ratio
        w = fromIntegral width
        h = fromIntegral height
        x_start = -ceiling(w/2) :: Int
-       x_end   = floor(w/2) - 1:: Int
+       x_end   =  floor(w/2) - 1:: Int
        y_start = -ceiling(h/2) :: Int
-       y_end   = floor(h/2) - 1:: Int
+       y_end   =  floor(h/2) - 1:: Int
+       local_dirs = [(x,y,0) | y <-[y_start..y_end], x <-[x_start..x_end]]
+       dirs = map (\(x,y,z) -> normalize (dir + (Vector3D(fromIntegral(x)*ratio,fromIntegral(-y)*ratio,0)))) local_dirs
