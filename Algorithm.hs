@@ -39,10 +39,11 @@ compute_anti_alias_rays scene ray = rays
        screen_w = 1.0 / w
        screen_h = 1.0 / h
        screensize  = min screen_w screen_h
-       rays = generate_primary_rays screensize ray 1 1
+       rays = generate_primary_rays screensize ray aa_factor aa_factor
+       aa_factor = scene_aa_factor scene
        
 compute_color_from_ray :: Scene -> Ray -> Color
-compute_color_from_ray scene ray = compute_color_from_closest_sphere ray (compute_closest_sphere ray (scene_spheres scene))
+compute_color_from_ray scene ray = compute_color_from_closest_sphere ray (compute_closest_sphere ray (shapes_spheres (scene_shapes scene)))
 
 -- It's the location of the intersection.
 compute_color_from_closest_sphere :: Ray -> [(Vector3D, Sphere)] -> Color

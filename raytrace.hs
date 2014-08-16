@@ -18,10 +18,10 @@ main = do
                   viewport_loc = Vector3D(0,0,1),
                   viewport_dir = Vector3D(0,0,-1),
                   viewport_up  = Vector3D(0,1,0),
-                  viewport_resW = 800,
-                  viewport_resH = 600
+                  viewport_resW = 80,
+                  viewport_resH = 60
                  })
-                 [
+                 (Shapes [
                   Sphere {sphere_loc = Vector3D(0,0,-2),
                           sphere_r = 0.2,
                           sphere_color_a = Color (0,0,60),
@@ -30,12 +30,13 @@ main = do
                          },
                   Sphere {sphere_loc = Vector3D(0,0,-4),
                           sphere_r = 1.2,
-                          sphere_color_a = Color (0,0,60),
-                          sphere_color_d = Color (0,0,10),
+                          sphere_color_a = Color (0,60,60),
+                          sphere_color_d = Color (0,10,10),
                           sphere_color_s = Color (0,0,6)
                          }
-                 ]
+                 ])
                  [
                   Vector3D (99,99,99)
                  ]
+                 1
         colors = raytrace scene

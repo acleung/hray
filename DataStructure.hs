@@ -8,6 +8,7 @@ module DataStructure (
  Vector3D(..),
  Scene(..),
  Sphere(..),
+ Shapes(..),
  normalize,
  average_color,
  dot, cross, scalar_multi
@@ -67,6 +68,11 @@ average_color colors = Color average
 
 type Ray = (Vector3D, Vector3D)
 
+
+data Shapes = Shapes {
+ shapes_spheres :: [Sphere]
+}
+
 data Sphere = Sphere {
  sphere_loc :: Vector3D,
  sphere_r :: Double,
@@ -95,7 +101,8 @@ data Viewport = Viewport {
  This is the input of the raytracer.
 -}
 data Scene = Scene {
- scene_viewport :: Viewport,
- scene_spheres  :: [Sphere],
- scene_lights   :: [Vector3D]
+ scene_viewport  :: Viewport,
+ scene_shapes    :: Shapes,
+ scene_lights    :: [Vector3D],
+ scene_aa_factor :: Int
 }
