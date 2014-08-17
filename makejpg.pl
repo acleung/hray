@@ -37,4 +37,5 @@ while(<>) {
 }
 binmode STDOUT;
 
-print $im->png;
+print $im->jpeg(100);
+# print $im->gif

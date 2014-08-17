@@ -7,4 +7,4 @@ raytrace: raytrace.hs Algorithm.hs DataStructure.hs
 	ghc -prof -fprof-auto -O2 -fexcess-precision -optc-O3 -optc-ffast-math -no-recomp -rtsopts -fbreak-on-exception raytrace.hs -o raytrace 
 
 clean:
-	rm -fr *.hi *.o *.jpg output.* raytrace raytrace.prof
+	rm -fr *.hi *.o *.jpg output.* raytrace raytrace.prof raytrace.hs.bak out/
