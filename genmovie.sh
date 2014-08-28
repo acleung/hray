@@ -5,7 +5,7 @@ fi
 
 cp raytrace.hs raytrace.hs.bak
 for i in `seq -w 1 200`; do
- value=`echo "$i * 0.5 + 1" | bc -l`
+ value=`echo "$i * 0.25 + 1" | bc -l`
  echo $value
  light="                 {-Light-} [Vector3D ($value,$value,9)]"
  cat raytrace.hs | sed -e "s/.*Light.*/$light/" > raytrace.hs.new
